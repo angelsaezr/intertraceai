@@ -13,6 +13,11 @@ let win;
 function createWindow() {
   win = new BrowserWindow({
     icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
+    width: 800,
+    height: 600,
+    minWidth: 800,
+    minHeight: 600,
+    title: "InterTraceAI",
     webPreferences: {
       preload: path.join(__dirname, "preload.mjs")
     }
@@ -37,6 +42,7 @@ app.on("activate", () => {
     createWindow();
   }
 });
+app.disableHardwareAcceleration();
 app.whenReady().then(createWindow);
 export {
   MAIN_DIST,

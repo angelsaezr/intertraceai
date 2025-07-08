@@ -29,6 +29,11 @@ let win: BrowserWindow | null
 function createWindow() {
   win = new BrowserWindow({
     icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
+    width: 800,
+    height: 600,
+    minWidth: 800,
+    minHeight: 600,
+    title: 'InterTraceAI',
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
     },
@@ -65,4 +70,8 @@ app.on('activate', () => {
   }
 })
 
+// Disable hardware acceleration for better compatibility with some systems
+app.disableHardwareAcceleration()
+
+// This method will be called when Electron has finished
 app.whenReady().then(createWindow)
