@@ -34,12 +34,12 @@ async def chat(websocket: WebSocket):
                     model_reply = data.get("response", "Error: no response")
 
                 except httpx.ReadTimeout:
-                    model_reply = "SERVER: Timeout while waiting for response from model."
+                    model_reply = "Timeout while waiting for response from model."
                 except httpx.HTTPStatusError as e:
                     model_reply = f"Error HTTP: {e.response.status_code} - {e.response.text}"
                 except Exception as ex:
                     traceback.print_exc()
-                    model_reply = "SERVER: An error occurred while processing your request."
+                    model_reply = "An error occurred while processing your request."
 
                 await websocket.send_text(model_reply)
 
