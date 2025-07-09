@@ -33,17 +33,18 @@ async def chat(websocket: WebSocket):
                     data = response.json()
                     model_reply = data.get("response", "Error: no response")
 
+                    await websocket.send_text(model_reply)
+
+                except WebSocketDisconnect:
+                    print("SERVER: WebSocket disconnected")
+                    break
                 except httpx.ReadTimeout:
-                    model_reply = "Timeout while waiting for response from model."
+                    await websocket.send_text("Timeout while waiting for response from model.")
                 except httpx.HTTPStatusError as e:
-                    model_reply = f"Error HTTP: {e.response.status_code} - {e.response.text}"
+                    await websocket.send_text(f"Error HTTP: {e.response.status_code} - {e.response.text}")
                 except Exception as ex:
                     traceback.print_exc()
-                    model_reply = "An error occurred while processing your request."
+                    await websocket.send_text("An error occurred while processing your request.")
 
-                await websocket.send_text(model_reply)
-
-        except WebSocketDisconnect:
-            print("SERVER: WebSocket disconnected")
         except Exception as e:
             traceback.print_exc()

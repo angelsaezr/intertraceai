@@ -24,8 +24,8 @@ env/
 docker-compose.override.yml
 
 # --- Models & data ---
-!backend/app/models
-models/
+!backend/app/models/
+/models/
 *.gguf
 *.bin
 *.pt
