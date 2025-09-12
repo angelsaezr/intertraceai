@@ -35,28 +35,26 @@ const App = () => {
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      <div
-        style={{
-          height: 300,
-          overflowY: "scroll",
-          border: "1px solid gray",
-          marginBottom: 10,
-        }}
-      >
+    <div className="p-5">
+      <div className="h-72 overflow-y-scroll border border-gray-400 mb-2.5 rounded">
         {messages.map((msg, idx) => (
           <div key={idx}>{msg}</div>
         ))}
       </div>
-      <input
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-        style={{ width: "80%" }}
-      />
-      <button onClick={sendMessage} style={{ width: "18%", marginLeft: "2%" }}>
-        Send
-      </button>
+      <div className="flex">
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          className="w-4/5 border border-gray-300 rounded px-2 py-1 focus:outline-none"
+        />
+        <button
+          onClick={sendMessage}
+          className="w-[18%] ml-[2%] bg-blue-500 text-white rounded px-2 py-1 hover:bg-blue-600"
+        >
+          Send
+        </button>
+      </div>
     </div>
   );
 };
