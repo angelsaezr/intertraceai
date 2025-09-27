@@ -1,12 +1,15 @@
 fastapi
 uvicorn[standard]
-sqlmodel
-sqlite-vss
+chromadb
 sentence-transformers
+pydantic[dotenv]
 PyMuPDF
 pdfplumber
+pypdf
 python-multipart
 websockets
 python-dotenv
 httpx
 pytest
+pyinstaller
+llama-cpp-python
