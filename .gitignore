@@ -55,5 +55,8 @@ frontend/out/
 .DS_Store
 Thumbs.db
 
+# Ruff cache
+.ruff_cache/
+
 # VSCode settings
 .vscode/
