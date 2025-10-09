@@ -13,3 +13,4 @@ httpx
 pytest
 pyinstaller
 llama-cpp-python
+ruff>=0.6.0
