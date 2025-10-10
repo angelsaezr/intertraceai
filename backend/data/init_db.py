@@ -36,7 +36,7 @@ cursor.execute("DELETE FROM documents WHERE name = ?", ("Informe.xlsx",))
 conn.commit()
 
 # Show the updated documents
-print("\nAfter update and delere:")
+print("\nAfter update and delete:")
 cursor.execute("SELECT * FROM documents")
 for row in cursor.fetchall():
     print(row)

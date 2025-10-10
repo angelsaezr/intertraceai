@@ -1,6 +1,8 @@
 fastapi
 uvicorn[standard]
 chromadb
+sqlmodel
+langchain
 sentence-transformers
 pydantic
 PyMuPDF
