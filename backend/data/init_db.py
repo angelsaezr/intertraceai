@@ -1,7 +1,7 @@
 import sqlite3
 
 # Connect to the SQLite database (it will be created if it doesn't exist)
-conn = sqlite3.connect("intertraceai.db")
+conn = sqlite3.connect("sqlite.db")
 cursor = conn.cursor()
 
 # Create a table named 'documents' if it does not already exist
