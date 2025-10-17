@@ -3,6 +3,7 @@ uvicorn[standard]
 chromadb
 sqlmodel
 langchain
+langchain-community
 sentence-transformers
 pydantic
 PyMuPDF
