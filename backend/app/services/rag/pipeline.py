@@ -1,4 +1,4 @@
-from backend.config import debug_print
+from backend.app.core.config import debug_print
 
 from .ingest import Ingest
 
@@ -8,7 +8,8 @@ class Pipeline:
         self.ingest = Ingest()
 
     def run(self):
-        split_docs = self.ingest.load_documents()
+        documents = self.ingest.load_documents()
+        split_docs = self.ingest.split_documents(documents)
         embeddings = self.ingest.generate_embeddings(split_docs)
         return split_docs, embeddings
     
