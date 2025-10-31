@@ -43,14 +43,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Vite
-.vite/
-frontend/.vite/
-
-# Electron cache
-frontend/.cache/
-frontend/out/
-
 # MacOS/Linux/Windows system files
 .DS_Store
 Thumbs.db

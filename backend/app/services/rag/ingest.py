@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from chromadb import PersistentClient
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import DirectoryLoader, TextLoader
 from sentence_transformers import SentenceTransformer
@@ -65,3 +66,27 @@ class Ingest:
         config.debug_print(f"Embeddings shape: {embeddings.shape}")
         config.debug_print(f"Example first embedding (first 5 values): {embeddings[0][:5]}")
         return embeddings
+
+    def save_to_vector_db(self, embeddings, split_docs):
+        # Initialize Chroma client
+        client = PersistentClient(path=config.CHROMA_DIR)
+
+        # Create or get a collection for document embeddings
+        collection = client.get_or_create_collection(name="document_embeddings")
+
+        # Prepare data for insertion
+        documents = [d.page_content for d in split_docs]
+        ids = [f"doc_{i}" for i in range(len(documents))]  # Unique IDs for each document
+        metadatas = [{"source": d.metadata.get("source", "unknown")} for d in split_docs]
+
+        # Add embeddings to the collection
+        collection.add(embeddings=embeddings, documents=documents, metadatas=metadatas, ids=ids)
+
+        config.debug_print(f"Saved {len(embeddings)} embeddings to Chroma DB")
+
+if __name__ == "__main__":
+    ingest = Ingest()
+    documents = ingest.load_documents()
+    split_docs = ingest.split_documents(documents)
+    embeddings = ingest.generate_embeddings(split_docs)
+    ingest.save_to_vector_db(embeddings, split_docs)

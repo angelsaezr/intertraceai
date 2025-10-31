@@ -1,20 +1,24 @@
 from pathlib import Path
 
-# Configuration settings
+# Application settings
+BASE_DIR = Path(__file__).resolve().parents[3] # Base directory of the project
 APP_NAME = "InterTraceAI"
-DB_URL = f"sqlite:///{Path('data/sqlite.db').absolute()}"
-DIRECTORY_TEST = str(Path("backend/test").absolute())
-EMBEDDING_MODEL = "all-MiniLM-L6-v2"
-CHROMA_DIR = str(Path("data/chroma").absolute())
-UPLOAD_DIR = str(Path("data/uploads").absolute())
+DIRECTORY_TEST = str(BASE_DIR / "backend" / "test")
+SQLITE_DIR = str(BASE_DIR / "backend" / "data" / "sqlite")
+SQLITE_URL = f"sqlite:///{BASE_DIR / 'backend' / 'data' / 'sqlite' / 'database.db'}"
+CHROMA_DIR = str(BASE_DIR / "backend" / "data" / "chroma")
 LMSTUDIO_BASE_URL = "http://localhost:1234/v1/chat/completions"
-MODEL = "google/gemma-3-1b"
-BATCH_SIZE = 10
-CHUNK_SIZE = 40
-CHUNK_OVERLAP = 5
-MAX_CONTEXT_CHARS = 4000 # Maximum characters for context
-TOP_K = 5 # Number of top results to return
+LLM_MODEL = "google/gemma-3-1b"
 
+# RAG and Embedding settings
+EMBEDDING_MODEL = "all-MiniLM-L6-v2"
+BATCH_SIZE = 10 # Batch size for embedding generation
+CHUNK_SIZE = 300 # Chunk size for text splitting
+CHUNK_OVERLAP = 50 # Overlap size for text splitting
+MAX_CONTEXT_CHARS = 800 # Max characters for context retrieval
+TOP_K = 5 # Number of top documents to retrieve 
+
+# Debug mode
 DEBUG_MODE = True
 
 def debug_print(*args, **kwargs):
