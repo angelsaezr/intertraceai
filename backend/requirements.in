@@ -19,3 +19,5 @@ llama-cpp-python
 ruff>=0.6.0
 tiktoken
 pip-tools
+sphinx-rtd-theme
+sphinx-autodoc-typehints

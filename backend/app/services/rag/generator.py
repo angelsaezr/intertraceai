@@ -2,25 +2,33 @@ import traceback
 
 import httpx
 
-import backend.app.core.config as config
+import app.core.config as config
 
 from .retriever import Retriever
 
 
 class Generator:
-    def __init__(
-        self,
-        llm_url=config.LMSTUDIO_BASE_URL,
-        model_name=config.LLM_MODEL,
-        temperature=0.7
-    ):
-        self.llm_url = llm_url
-        self.model_name = model_name
-        self.temperature = temperature
+    """
+    RAG Response Generator using local LLM and Retriever
+    """
+
+    def __init__(self):
+        """
+        Initialize the RAG generator.
+        """
+        
+        self.llm_url = config.LMSTUDIO_BASE_URL
+        self.model_name = config.LLM_MODEL
+        self.temperature = config.TEMPERATURE
         self.retriever = Retriever()
 
     async def _call_llm(self, messages):
-        """Send prompt to the local LLM (LMStudio API)"""
+        """
+        Send prompt to the local LLM (LMStudio API)
+        
+        param messages: List of message dicts for the LLM
+        return: LLM response text
+        """
 
         payload = {
             "model": self.model_name,
@@ -36,7 +44,12 @@ class Generator:
             return data["choices"][0]["message"]["content"]
 
     async def generate(self, query: str) -> str:
-        """Generate RAG response using retrieved context"""
+        """
+        Generate RAG response using retrieved context
+        
+        param query: User query
+        return: Generated response text
+        """
 
         try:
             # Retrieve context from ChromaDB
@@ -64,15 +77,14 @@ class Generator:
             return "An error occurred while generating the response."
 
 
-# Manual test
 if __name__ == "__main__":
     import asyncio
 
     async def test():
         g = Generator()
-        q = "What said Tom when he smiled?"
+        q = "What happened when Emma received a call from a little boy named Tom?"
         ans = await g.generate(q)
-        print("\n=== RAG RESPONSE ===")
-        print(ans)
+        config.debug_print("\n=== RAG RESPONSE ===")
+        config.debug_print(ans)
 
     asyncio.run(test())

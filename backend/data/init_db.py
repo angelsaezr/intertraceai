@@ -1,5 +1,7 @@
 import sqlite3
 
+import app.core.config as config
+
 # Connect to the SQLite database (it will be created if it doesn't exist)
 conn = sqlite3.connect("sqlite.db")
 cursor = conn.cursor()
@@ -22,10 +24,10 @@ cursor.executemany("INSERT INTO documents (name) VALUES (?)", docs)
 conn.commit()
 
 # Documents inserted
-print("Documents in database:")
+config.debug_print("Documents in database:")
 cursor.execute("SELECT * FROM documents")
 for row in cursor.fetchall():
-    print(row)
+    config.debug_print(row)
 
 # Update the table to include 'edad' and 'email'
 cursor.execute("UPDATE documents SET name = ? WHERE id = ?", ("Recibo actualizado.pdf", 1))
@@ -36,10 +38,10 @@ cursor.execute("DELETE FROM documents WHERE name = ?", ("Informe.xlsx",))
 conn.commit()
 
 # Show the updated documents
-print("\nAfter update and delete:")
+config.debug_print("\nAfter update and delete:")
 cursor.execute("SELECT * FROM documents")
 for row in cursor.fetchall():
-    print(row)
+    config.debug_print(row)
 
 # Close the database connection
 conn.close()
