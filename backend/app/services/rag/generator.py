@@ -82,7 +82,7 @@ if __name__ == "__main__":
 
     async def test():
         g = Generator()
-        q = "What happened when Emma received a call from a little boy named Tom?"
+        q = "How many Champions League titles has Real Madrid won?"
         ans = await g.generate(q)
         config.debug_print("\n=== RAG RESPONSE ===")
         config.debug_print(ans)

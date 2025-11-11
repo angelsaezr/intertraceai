@@ -7,7 +7,7 @@ DIRECTORY_TEST = str(BASE_DIR / "backend" / "test")
 SQLITE_DIR = str(BASE_DIR / "backend" / "data" / "sqlite")
 SQLITE_URL = f"sqlite:///{BASE_DIR / 'backend' / 'data' / 'sqlite' / 'database.db'}"
 CHROMA_DIR = str(BASE_DIR / "backend" / "data" / "chroma")
-LMSTUDIO_BASE_URL = "http://localhost:1234/v1/chat/completions"
+LMSTUDIO_BASE_URL = "http://localhost:1234/v1/chat/completions" 
 LLM_MODEL = "google/gemma-3-1b"
 
 # RAG and Embedding settings
