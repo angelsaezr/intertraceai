@@ -5,9 +5,7 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
 
 import app.core.config as config
-from app.services.rag.ingest import Ingest
 from app.services.rag.pipeline import Pipeline
-from app.services.search.engine import Engine
 
 app = APIRouter()
 
@@ -21,34 +19,44 @@ class QueryRequest(BaseModel):
 class QueryResponse(BaseModel):
     answer: str
 
-# Initialize services
-engine = Engine()
-pipeline = Pipeline()
-ingest = Ingest()
-
 # Endpoints
 
 @app.get("/")
 async def root():
     return {"message": "Welcome to the InterTraceAI API"}
 
-@app.get("/documents")
+@app.get("/documents", tags=["Documents"])
 async def get_documents():
     """
-    Retrieve all documents from the database.
+    Get all documents from the database.
     """
     
     return {"message": "List of documents"}
 
-@app.post("/documents")
-async def add_document(document: Document):
+@app.post("/documents/upload", tags=["Documents"])
+async def upload_document(document: Document):
     """
     Add a new document to the database.
     """
 
     return {"message": "Document added successfully"}
 
-@app.post("/pipeline/query", tags=["Pipeline"], response_model=QueryResponse)
+@app.delete("/documents/{doc_id}", tags=["Documents"])
+async def delete_document(doc_id: str):
+    """
+    Delete a document from the database.
+    """
+    return {"message": f"Document {doc_id} deleted successfully."}
+
+@app.post("/search", tags=["Search"])
+async def search():
+    """
+    Perform a search.
+    """
+
+    return {"message": "Search results"}
+
+@app.post("/query", tags=["Query"], response_model=QueryResponse)
 async def query_pipeline(request: QueryRequest):
     """
     Query the RAG pipeline with a question and get an answer.

@@ -2,7 +2,6 @@ import app.core.config as config
 
 from .generator import Generator
 from .ingest import Ingest
-from .retriever import Retriever
 
 
 class Pipeline:
@@ -16,7 +15,6 @@ class Pipeline:
         """
 
         self.ingest = Ingest()
-        self.retriever = Retriever()
         self.generator = Generator()
 
     def run(self):
