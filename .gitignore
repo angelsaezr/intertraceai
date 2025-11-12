@@ -33,6 +33,7 @@ docker-compose.override.yml
 *.ckpt
 *.onnx
 *.pb
+*.pickle
 
 # --- Node.js / Electron ---
 node_modules/

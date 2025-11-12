@@ -1,3 +1,5 @@
+import asyncio
+
 import app.core.config as config
 
 from .generator import Generator
@@ -17,14 +19,16 @@ class Pipeline:
         self.ingest = Ingest()
         self.generator = Generator()
 
-    def run(self):
+    def run(self, file_paths: list[str]):
         """
-        Execute the RAG pipeline.
+        Execute the ingestion and embedding pipeline.
 
+        param file_paths: List of file paths to ingest
         return: Tuple of (split documents, embeddings)
         """
+
         # Load documents
-        documents = self.ingest.load_documents()
+        documents = self.ingest.load_from_paths(file_paths)
         
         # Split documents into chunks
         split_docs = self.ingest.split_documents(documents)
@@ -49,15 +53,14 @@ class Pipeline:
         return response
 
 if __name__ == "__main__":
+    #engine = Engine()
     pipeline = Pipeline()
 
-    # Example usage of the pipeline
-    config.debug_print("Running the pipeline...")
-    split_docs, embeddings = pipeline.run()
-    config.debug_print("Pipeline completed.")
+    #engine_results = engine.search()
 
-    # Example query
-    user_query = "Is Real Madrid the best football club in the world?"
+    #split_docs, embeddings = pipeline.run(file_paths=engine_results)
+
+    user_query = "Is latex a mathematics typesetting program that is the standard for most professional mathematics writing?"
     config.debug_print("Processing query...")
-    response = pipeline.query(user_query)
+    response = asyncio.run(pipeline.query(user_query))
     config.debug_print("\nResponse:", response)

@@ -13,7 +13,7 @@ LLM_MODEL = "google/gemma-3-1b"
 # RAG and Embedding settings
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 BATCH_SIZE = 10 # Batch size for embedding generation
-CHUNK_SIZE = 300 # Chunk size for text splitting
+CHUNK_SIZE = 600 # Chunk size for text splitting
 CHUNK_OVERLAP = 50 # Overlap size for text splitting
 MAX_CONTEXT_CHARS = 800 # Max characters for context retrieval
 TOP_K = 5 # Number of top documents to retrieve 
@@ -25,7 +25,8 @@ TEMPERATURE = 0.7 # Default temperature for LLM responses
 
 # Search engine settings
 SEARCH_MAX_DEPTH = 500
-SEARCH_MAX_DIR_SIZE_MB = 999999999999
+SEARCH_MAX_DIR_SIZE_MB = 200
+ALLOWED_EXTENSIONS = {".pdf", ".docx"}
 EXCLUDED_FOLDERS = {
     # --- Windows  ---
     r"C:\Windows",

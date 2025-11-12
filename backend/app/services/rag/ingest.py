@@ -2,7 +2,10 @@ from pathlib import Path
 
 from chromadb import PersistentClient
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.document_loaders import DirectoryLoader, TextLoader
+from langchain_community.document_loaders import (
+    PyPDFLoader,
+    UnstructuredWordDocumentLoader,
+)
 from sentence_transformers import SentenceTransformer
 
 import app.core.config as config
@@ -18,18 +21,7 @@ class Ingest:
         Initialize the ingestion pipeline.
         """
 
-        self.directory = str(Path(config.DIRECTORY_TEST)) # Convert to string for DirectoryLoader
-
-        # File loader for text files
-        self.dir_loader = DirectoryLoader(
-            self.directory,
-            glob="*.txt",
-            loader_cls=TextLoader,
-            loader_kwargs={"encoding": "utf8"},
-            show_progress=config.SHOW_PROGRESS
-        )
-
-        # Load model only once
+        # Load model
         self.model = SentenceTransformer(config.EMBEDDING_MODEL)
 
         # Configuration parameters
@@ -43,14 +35,33 @@ class Ingest:
             chunk_overlap=config.CHUNK_OVERLAP,
         )
 
-    def load_documents(self):
+    def load_from_paths(self, file_paths: list[str]):
         """
-        Load documents from the specified directory.
+        Load documents from a list of file paths.
 
+        param file_paths: List of file paths to load
         return: List of loaded documents
         """
+        documents = []
 
-        documents = self.dir_loader.load()
+        for path in file_paths:
+            ext = Path(path).suffix.lower() # Get file extension in lowercase
+            try:
+                if ext == ".pdf":
+                    loader = PyPDFLoader(path)
+                elif ext == ".docx":
+                    loader = UnstructuredWordDocumentLoader(path)
+                else:
+                    # Skip unsupported formats
+                    continue
+
+                docs = loader.load() # Load documents from the file
+                documents.extend(docs) # Add loaded documents to the list
+
+            except Exception as e:
+                config.debug_print(f"Error loading {path}: {e}")
+                continue
+
         return documents
 
     def split_documents(self, documents):

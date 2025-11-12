@@ -16,7 +16,7 @@ class Engine:
         Initialize the search engine.
         """
 
-        self.allowed_extensions = {".pdf", ".docx", ".xlsx", ".txt", ".md"}
+        self.allowed_extensions = config.ALLOWED_EXTENSIONS
         self.home_path = Path.home()
         self.max_depth = config.SEARCH_MAX_DEPTH
         self.max_dir_size_mb = config.SEARCH_MAX_DIR_SIZE_MB
