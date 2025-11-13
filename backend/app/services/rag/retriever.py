@@ -1,3 +1,4 @@
+import tiktoken
 from chromadb import PersistentClient
 from sentence_transformers import SentenceTransformer
 
@@ -73,24 +74,51 @@ class Retriever:
 
         return retrieved
 
-    def get_context_text(self, query: str, max_chars=config.MAX_CONTEXT_CHARS):
+    def get_context_text(self, query: str, max_tokens=config.MAX_CONTEXT_TOKENS):
         """
-        Get context text for a query.
+        Build context limited by token count instead of character count.
         
         param query: User query
-        param max_chars: Maximum characters for context
+        param max_tokens: Maximum tokens allowed in context
         return: Combined context text
         """
 
+        # Retrieve documents
         retrieved_docs = self.search(query)
 
-        # Combine texts up to max_chars
+        # Simple keyword-based re-ranking for better relevance
+        keywords = query.lower().split()
+
+        def score(doc):
+            text = doc["text"].lower()
+            return sum(text.count(k) for k in keywords)
+
+        # Sort documents by lexical score (descending)
+        retrieved_docs = sorted(retrieved_docs, key=score, reverse=True)
+
+        # Load tokenizer
+        encoder = tiktoken.get_encoding("cl100k_base")
+
         combined = ""
+        total_tokens = 0
+
         for item in retrieved_docs:
-            if len(combined) + len(item["text"]) <= max_chars:
-                combined += "\n" + item["text"]
-            else:
+            text = item["text"]
+            tokens = len(encoder.encode(text))
+
+            # If adding this chunk would exceed max tokens → stop
+            if total_tokens + tokens > max_tokens:
                 break
+            
+            # Append chunk with metadata
+            combined += (
+                f"\n\n[CHUNK id={item['id']} source={item['metadata'].get('source','unknown')}]"
+                f"\n{text}"
+            )
+
+            total_tokens += tokens
+
+        config.debug_print(f"[ContextBuilder] Total tokens used: {total_tokens}/{max_tokens}")
 
         return combined.strip()
 

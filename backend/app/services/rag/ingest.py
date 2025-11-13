@@ -1,9 +1,10 @@
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from chromadb import PersistentClient
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import (
-    PyPDFLoader,
+    PyMuPDFLoader,
     UnstructuredWordDocumentLoader,
 )
 from sentence_transformers import SentenceTransformer
@@ -29,38 +30,46 @@ class Ingest:
         self.use_normalize = config.USE_NORMALIZE
         self.show_progress = config.SHOW_PROGRESS
 
+        # Connect to Chroma vector database
+        self.client = PersistentClient(path=config.CHROMA_DIR)
+        self.collection = self.client.get_or_create_collection(name=config.COLLECTION_NAME)
+
         # Optimized text splitter (fewer calls, more speed)
         self.text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=config.CHUNK_SIZE, # Chunk size for text splitting
             chunk_overlap=config.CHUNK_OVERLAP,
         )
 
-    def load_from_paths(self, file_paths: list[str]):
+    def load_from_paths(self, file_paths):
         """
-        Load documents from a list of file paths.
+        Load documents from given file paths.
 
         param file_paths: List of file paths to load
         return: List of loaded documents
         """
-        documents = []
 
-        for path in file_paths:
-            ext = Path(path).suffix.lower() # Get file extension in lowercase
+        def load(path):
             try:
+                ext = Path(path).suffix.lower()
                 if ext == ".pdf":
-                    loader = PyPDFLoader(path)
+                    loader = PyMuPDFLoader(path)
                 elif ext == ".docx":
                     loader = UnstructuredWordDocumentLoader(path)
                 else:
-                    # Skip unsupported formats
-                    continue
-
-                docs = loader.load() # Load documents from the file
-                documents.extend(docs) # Add loaded documents to the list
-
+                    return []
+                return loader.load()
             except Exception as e:
                 config.debug_print(f"Error loading {path}: {e}")
-                continue
+                return []
+
+        documents = []
+        
+        # Use ThreadPoolExecutor for concurrent loading
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            results = executor.map(load, file_paths)
+
+        for docs in results:
+            documents.extend(docs)
 
         return documents
 
@@ -105,19 +114,13 @@ class Ingest:
         param split_docs: List of split document chunks
         """
 
-        # Initialize Chroma client
-        client = PersistentClient(path=config.CHROMA_DIR)
-
-        # Create or get a collection for document embeddings
-        collection = client.get_or_create_collection(name="document_embeddings")
-
         # Prepare data for insertion
         documents = [d.page_content for d in split_docs]
         ids = [f"doc_{i}" for i in range(len(documents))]  # Unique IDs for each document
         metadatas = [{"source": d.metadata.get("source", "unknown")} for d in split_docs]
 
         # Add embeddings to the collection
-        collection.add(embeddings=embeddings, documents=documents, metadatas=metadatas, ids=ids)
+        self.collection.add(embeddings=embeddings, documents=documents, metadatas=metadatas, ids=ids)
 
         config.debug_print(f"Saved {len(embeddings)} embeddings to Chroma DB")
 

@@ -2,6 +2,7 @@ import asyncio
 
 import app.core.config as config
 
+#from ..search.engine import Engine
 from .generator import Generator
 from .ingest import Ingest
 
@@ -53,14 +54,16 @@ class Pipeline:
         return response
 
 if __name__ == "__main__":
-    #engine = Engine()
     pipeline = Pipeline()
+    """ engine = Engine()
 
-    #engine_results = engine.search()
+    engine_results = engine.search()
 
-    #split_docs, embeddings = pipeline.run(file_paths=engine_results)
+    config.debug_print("Ingesting and embedding documents...")
+    split_docs, embeddings = pipeline.run(file_paths=engine_results)
+    config.debug_print("Done") """
 
-    user_query = "Is latex a mathematics typesetting program that is the standard for most professional mathematics writing?"
+    user_query = "What is latex?"
     config.debug_print("Processing query...")
     response = asyncio.run(pipeline.query(user_query))
     config.debug_print("\nResponse:", response)

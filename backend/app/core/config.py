@@ -12,16 +12,16 @@ LLM_MODEL = "google/gemma-3-1b"
 
 # RAG and Embedding settings
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
-BATCH_SIZE = 10 # Batch size for embedding generation
-CHUNK_SIZE = 600 # Chunk size for text splitting
-CHUNK_OVERLAP = 50 # Overlap size for text splitting
-MAX_CONTEXT_CHARS = 800 # Max characters for context retrieval
+BATCH_SIZE = 32 # Batch size for embedding generation
+CHUNK_SIZE = 1500 # Chunk size for text splitting
+CHUNK_OVERLAP = 100 # Overlap size for text splitting
+MAX_CONTEXT_TOKENS = 1200   # Max tokens for context retrieval
 TOP_K = 5 # Number of top documents to retrieve 
 USE_NORMALIZE = True # Whether to normalize embeddings
 SHOW_PROGRESS = True # Whether to show progress bars
 COLLECTION_NAME = "document_embeddings"
 CONVERT_TO_NP = True # Whether to convert embeddings to numpy arrays
-TEMPERATURE = 0.7 # Default temperature for LLM responses
+TEMPERATURE = 0.1 # Default temperature for LLM responses
 
 # Search engine settings
 SEARCH_MAX_DEPTH = 500
