@@ -17,9 +17,16 @@ class Engine:
         """
 
         self.allowed_extensions = config.ALLOWED_EXTENSIONS
-        self.home_path = Path.home()
         self.max_depth = config.SEARCH_MAX_DEPTH
         self.max_dir_size_mb = config.SEARCH_MAX_DIR_SIZE_MB
+
+        # Expected Documents folder
+        documents = Path.home() / "Documents"
+
+        if not documents.exists() or not documents.is_dir():
+            raise FileNotFoundError(f"Documents folder does not exist: {documents}")
+
+        self.docs_path = documents
 
     def _get_dir_size(self, path):
         """
@@ -59,7 +66,7 @@ class Engine:
         results = []
         try:
             # Skip large directories for efficiency, except for the home directory
-            if directory != str(self.home_path) and self._get_dir_size(directory) > self.max_dir_size_mb:
+            if directory != str(self.docs_path) and self._get_dir_size(directory) > self.max_dir_size_mb:
                 return results
 
             with os.scandir(directory) as entries:
@@ -88,8 +95,9 @@ class Engine:
         return: List of found file paths
         """
 
-        config.debug_print(f"Searching in {self.home_path} ...")
-        files = self._search_directory(str(self.home_path))
+        config.debug_print(f"Searching in {self.docs_path} ...")
+        files = self._search_directory(str(self.docs_path))
+        config.debug_print(f"Found {len(files)} files.")
 
         return files
 

@@ -1,69 +1,42 @@
-import asyncio
+from pathlib import Path
 
-import app.core.config as config
+from sqlmodel import Session
 
-#from ..search.engine import Engine
-from .generator import Generator
-from .ingest import Ingest
+from app.db import repository
+from app.services.rag.generator import Generator
+from app.services.rag.ingest import Ingest
 
 
 class Pipeline:
-    """
-    RAG Ingestion and Embedding Pipeline
-    """
-
     def __init__(self):
-        """
-        Initialize the RAG pipeline.
-        """
-
         self.ingest = Ingest()
         self.generator = Generator()
 
-    def run(self, file_paths: list[str]):
-        """
-        Execute the ingestion and embedding pipeline.
-
-        param file_paths: List of file paths to ingest
-        return: Tuple of (split documents, embeddings)
-        """
-
-        # Load documents
+    def run(self, file_paths: list[str], session: Session):
         documents = self.ingest.load_from_paths(file_paths)
-        
-        # Split documents into chunks
+
+        db_documents = []
+        for doc in documents:
+            source = doc.metadata.get("source")
+            db_doc = repository.create_document(
+                session=session,
+                name=Path(source).name,
+                path=source
+            )
+            db_documents.append(db_doc)
+
         split_docs = self.ingest.split_documents(documents)
-        
-        # Generate embeddings for the document chunks
         embeddings = self.ingest.generate_embeddings(split_docs)
-        
-        # Save embeddings to the vector database
-        self.ingest.save_to_vector_db(embeddings, split_docs)
-        
+
+        self.ingest.save_to_db(
+            embeddings=embeddings,
+            split_docs=split_docs,
+            db_session=session,
+            db_documents=db_documents
+        )
         return split_docs, embeddings
 
-    async def query(self, user_query):
-        """
-        Process a user query through the RAG pipeline.
-
-        param user_query: The query string from the user
-        return: Generated response from the pipeline
-        """
-        
+    async def query(self, user_query: str, session: Session):
         response = await self.generator.generate(user_query)
+        repository.create_history(session, user_query, response)
         return response
-
-if __name__ == "__main__":
-    pipeline = Pipeline()
-    """ engine = Engine()
-
-    engine_results = engine.search()
-
-    config.debug_print("Ingesting and embedding documents...")
-    split_docs, embeddings = pipeline.run(file_paths=engine_results)
-    config.debug_print("Done") """
-
-    user_query = "What is latex?"
-    config.debug_print("Processing query...")
-    response = asyncio.run(pipeline.query(user_query))
-    config.debug_print("\nResponse:", response)

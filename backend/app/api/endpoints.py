@@ -1,11 +1,15 @@
 import traceback
 
 import httpx
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
+from sqlmodel import Session
 
 import app.core.config as config
+from app.db import repository
+from app.db.session import get_session, init_db
 from app.services.rag.pipeline import Pipeline
+from app.services.search.engine import Engine
 
 app = APIRouter()
 
@@ -21,17 +25,16 @@ class QueryResponse(BaseModel):
 
 # Endpoints
 
+app.add_event_handler("startup", init_db)
+
 @app.get("/")
 async def root():
     return {"message": "Welcome to the InterTraceAI API"}
 
 @app.get("/documents", tags=["Documents"])
-async def get_documents():
-    """
-    Get all documents from the database.
-    """
-    
-    return {"message": "List of documents"}
+def get_documents(session: Session = Depends(get_session)):
+    docs = repository.list_documents(session)
+    return docs
 
 @app.post("/documents/upload", tags=["Documents"])
 async def upload_document(document: Document):
@@ -53,16 +56,26 @@ async def search():
     """
     Perform a search.
     """
+    engine = Engine()
+    docs = engine.search()
+    return {"message": [doc for doc in docs]}
 
-    return {"message": "Search results"}
-
-@app.post("/query", tags=["Query"], response_model=QueryResponse)
-async def query_pipeline(request: QueryRequest):
-    """
-    Query the RAG pipeline with a question and get an answer.
-    """
+@app.post("/ingest", tags=["Pipeline"])
+async def ingest(session: Session = Depends(get_session)):
     pipeline = Pipeline()
-    answer = await pipeline.query(request.question)
+    engine = Engine()
+    file_paths = engine.search()
+    split_docs, embeddings = pipeline.run(file_paths, session)
+    return {
+        "message": "Pipeline run successfully",
+        "documents_loaded": len(split_docs),
+        "embeddings_generated": len(embeddings)
+    }
+
+@app.post("/query", tags=["Pipeline"], response_model=QueryResponse)
+async def query_pipeline(request: QueryRequest, session: Session = Depends(get_session)):
+    pipeline = Pipeline()
+    answer = await pipeline.query(request.question, session)
     return QueryResponse(answer=answer)
 
 @app.websocket("/chat")

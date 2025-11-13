@@ -10,6 +10,7 @@ from langchain_community.document_loaders import (
 from sentence_transformers import SentenceTransformer
 
 import app.core.config as config
+from app.db import repository
 
 
 class Ingest:
@@ -106,27 +107,37 @@ class Ingest:
         config.debug_print(f"Example first embedding (first 5 values): {embeddings[0][:5]}")
         return embeddings
 
-    def save_to_vector_db(self, embeddings, split_docs):
-        """
-        Save document embeddings to the vector database.
-
-        param embeddings: Numpy array of document embeddings
-        param split_docs: List of split document chunks
-        """
-
-        # Prepare data for insertion
-        documents = [d.page_content for d in split_docs]
-        ids = [f"doc_{i}" for i in range(len(documents))]  # Unique IDs for each document
+    def save_to_db(self, embeddings, split_docs, db_session, db_documents):
+        documents_text = [d.page_content for d in split_docs]
+        ids = [f"doc_{i}" for i in range(len(documents_text))]
         metadatas = [{"source": d.metadata.get("source", "unknown")} for d in split_docs]
 
-        # Add embeddings to the collection
-        self.collection.add(embeddings=embeddings, documents=documents, metadatas=metadatas, ids=ids)
+        # Save to Chroma
+        self.collection.add(
+            embeddings=embeddings,
+            documents=documents_text,
+            metadatas=metadatas,
+            ids=ids
+        )
 
-        config.debug_print(f"Saved {len(embeddings)} embeddings to Chroma DB")
+        # Save chunks to SQLite
+        source_to_docid = {doc.path: doc.id for doc in db_documents}
+
+        for order, (cid, text, meta) in enumerate(zip(ids, documents_text, metadatas)):
+            source = meta["source"]
+            doc_id = source_to_docid.get(source)
+
+            repository.create_chunk(
+                session=db_session,
+                document_id=doc_id,
+                chroma_id=cid,
+                text=text,
+                order=order
+            )
 
 if __name__ == "__main__":
     ingest = Ingest()
     documents = ingest.load_documents()
     split_docs = ingest.split_documents(documents)
     embeddings = ingest.generate_embeddings(split_docs)
-    ingest.save_to_vector_db(embeddings, split_docs)
+    ingest.save_to_db(embeddings, split_docs)
