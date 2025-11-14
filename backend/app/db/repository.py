@@ -1,7 +1,13 @@
+from typing import Optional
+
 from sqlmodel import Session, select
 
 from app.db.models import Chunk, Document, History
 
+
+def get_document_by_path(session: Session, path: str) -> Optional[Document]:
+    statement = select(Document).where(Document.path == path)
+    return session.exec(statement).first()
 
 def create_document(session: Session, name: str, path: str) -> Document:
     doc = Document(name=name, path=path)

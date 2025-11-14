@@ -1,8 +1,8 @@
 import tiktoken
-from chromadb import PersistentClient
 from sentence_transformers import SentenceTransformer
 
 import app.core.config as config
+from app.db.chromadb import collection
 
 
 class Retriever:
@@ -20,8 +20,7 @@ class Retriever:
         self.use_normalize = config.USE_NORMALIZE
 
         # Connect to Chroma vector database
-        self.client = PersistentClient(path=config.CHROMA_DIR)
-        self.collection = self.client.get_or_create_collection(name=config.COLLECTION_NAME)
+        self.collection = collection
 
     def embed_query(self, query: str):
         """

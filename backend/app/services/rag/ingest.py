@@ -1,7 +1,7 @@
+import uuid
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-from chromadb import PersistentClient
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import (
     PyMuPDFLoader,
@@ -11,6 +11,7 @@ from sentence_transformers import SentenceTransformer
 
 import app.core.config as config
 from app.db import repository
+from app.db.chromadb import collection
 
 
 class Ingest:
@@ -32,8 +33,7 @@ class Ingest:
         self.show_progress = config.SHOW_PROGRESS
 
         # Connect to Chroma vector database
-        self.client = PersistentClient(path=config.CHROMA_DIR)
-        self.collection = self.client.get_or_create_collection(name=config.COLLECTION_NAME)
+        self.collection = collection
 
         # Optimized text splitter (fewer calls, more speed)
         self.text_splitter = RecursiveCharacterTextSplitter(
@@ -108,9 +108,10 @@ class Ingest:
         return embeddings
 
     def save_to_db(self, embeddings, split_docs, db_session, db_documents):
+        
         documents_text = [d.page_content for d in split_docs]
-        ids = [f"doc_{i}" for i in range(len(documents_text))]
         metadatas = [{"source": d.metadata.get("source", "unknown")} for d in split_docs]
+        ids = [f"{Path(meta['source']).stem}_{uuid.uuid4()}" for meta in metadatas]
 
         # Save to Chroma
         self.collection.add(
