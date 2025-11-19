@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/example.dart';
+import 'core/router/app_router.dart';
+import 'core/theme/app_theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,17 +11,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
+      title: "InterTraceAI",
       themeMode: ThemeMode.dark,
-      darkTheme: ThemeData.dark(),
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text("InterTraceAI"),
-          backgroundColor: Colors.blue,
-          leading: Image.asset("assets/images/icon.png"),
-        ),
-        body: Example(),
-      ),
+      darkTheme: AppTheme.dark(),
+      routerConfig: appRouter,
+      debugShowCheckedModeBanner: false,
     );
   }
 }

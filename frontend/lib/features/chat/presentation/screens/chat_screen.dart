@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
-class Example extends StatelessWidget {
-  const Example({super.key});
+class ChatScreen extends StatelessWidget {
+  const ChatScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Image.asset("assets/images/icon.png")
+        Image.asset("assets/images/icon.png"),
+        
       ],
     );
   }
