@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intertraceai/core/theme/app_colors.dart';
 import 'sidebar_item.dart';
 
 class Sidebar extends StatelessWidget {
@@ -11,14 +12,30 @@ class Sidebar extends StatelessWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       width: collapsed ? 68 : 150,
-      color: Colors.grey.shade900,
+      color: AppColors.layoutBackground,
       child: Column(
         children: [
 
           SidebarItem(
-            icon: Icons.chat,
-            label: "Chat",
+            icon: Icons.add,
+            label: "New chat",
             route: "/chat",
+            collapsed: collapsed,
+          ),
+
+          SidebarItem(
+            icon: Icons.history,
+            label: "History",
+            route: "/history",
+            collapsed: collapsed,
+          ),
+
+          Spacer(),
+
+          SidebarItem(
+            icon: Icons.settings,
+            label: "Settings",
+            route: "/settings",
             collapsed: collapsed,
           ),
         ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../widgets/sidebar.dart';
+import 'package:intertraceai/core/theme/app_colors.dart';
+import 'package:intertraceai/shared/widgets/sidebar.dart';
 
 class AppLayout extends StatefulWidget {
   final Widget child;
@@ -16,8 +17,9 @@ class _AppLayoutState extends State<AppLayout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.appBackground,
       appBar: AppBar(
-        backgroundColor: Colors.grey.shade900,
+        backgroundColor: AppColors.layoutBackground,
         leading: IconButton(
           icon: Icon(collapsed ? Icons.menu : Icons.close),
           onPressed: () => setState(() => collapsed = !collapsed),
