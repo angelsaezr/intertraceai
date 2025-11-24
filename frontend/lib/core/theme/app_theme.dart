@@ -5,18 +5,19 @@ class AppTheme {
     final base = ThemeData.dark();
 
     return base.copyWith(
-      textTheme: base.textTheme.apply(
-        fontFamily: "StackSans",
-      ),
-      appBarTheme: const AppBarTheme(
-        titleTextStyle: TextStyle(
-          fontFamily: "StackSans",
-          fontWeight: FontWeight.w600,
-          fontSize: 18,
+      textTheme: base.textTheme.apply(fontFamily: "StackSans"),
+
+      filledButtonTheme: FilledButtonThemeData(
+        style: ButtonStyle(
+          foregroundColor: WidgetStateProperty.all(Colors.white),
+          textStyle: WidgetStateProperty.all(
+            const TextStyle(fontFamily: "StackSans"),
+          ),
         ),
       ),
-      primaryTextTheme: base.primaryTextTheme.apply(
-        fontFamily: "StackSans",
+
+      appBarTheme: const AppBarTheme(
+        titleTextStyle: TextStyle(fontFamily: "StackSans", fontSize: 18),
       ),
     );
   }

@@ -20,19 +20,18 @@ class _AppLayoutState extends State<AppLayout> {
       backgroundColor: AppColors.appBackground,
       appBar: AppBar(
         backgroundColor: AppColors.layoutBackground,
-        leading: IconButton(
-          icon: Icon(collapsed ? Icons.menu : Icons.close),
-          onPressed: () => setState(() => collapsed = !collapsed),
+        leading: Align(
+          alignment: Alignment.centerRight,
+          child: IconButton(
+            icon: Icon(collapsed ? Icons.menu : Icons.close),
+            onPressed: () => setState(() => collapsed = !collapsed),
+          ),
         ),
 
         title: Row(
           children: [
             SizedBox(width: 10),
-            Image.asset(
-              "assets/images/icon.png",
-              height: 32,
-              width: 32,
-            ),
+            Image.asset("assets/images/icon.png", height: 32, width: 32),
             SizedBox(width: 10),
             Text("InterTraceAI"),
           ],

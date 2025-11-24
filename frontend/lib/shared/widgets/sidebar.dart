@@ -11,11 +11,10 @@ class Sidebar extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      width: collapsed ? 68 : 150,
+      width: collapsed ? 72 : 140,
       color: AppColors.layoutBackground,
       child: Column(
         children: [
-
           SidebarItem(
             icon: Icons.add,
             label: "New chat",
