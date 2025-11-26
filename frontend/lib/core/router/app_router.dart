@@ -1,8 +1,8 @@
 import 'package:go_router/go_router.dart';
-import 'package:intertraceai/features/chat/presentation/screens/history_screen.dart';
+import 'package:intertraceai/features/history/presentation/screens/history_screen.dart';
 import 'package:intertraceai/shared/layout/app_layout.dart';
 import 'package:intertraceai/features/chat/presentation/screens/chat_screen.dart';
-import 'package:intertraceai/features/chat/presentation/screens/settings_screen.dart';
+import 'package:intertraceai/features/settings/presentation/screens/settings_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
