@@ -16,25 +16,25 @@ class Sidebar extends StatelessWidget {
       child: Column(
         children: [
           SidebarItem(
-            icon: Icons.add,
-            label: "New chat",
+            icon: Icons.chat_bubble,
+            label: "Chat",
             route: "/chat",
             collapsed: collapsed,
           ),
 
           SidebarItem(
-            icon: Icons.history,
-            label: "History",
-            route: "/history",
+            icon: Icons.description,
+            label: "Docs",
+            route: "/docs",
             collapsed: collapsed,
           ),
 
           Spacer(),
 
           SidebarItem(
-            icon: Icons.settings,
-            label: "Settings",
-            route: "/settings",
+            icon: Icons.info,
+            label: "Info",
+            route: "/info",
             collapsed: collapsed,
           ),
         ],

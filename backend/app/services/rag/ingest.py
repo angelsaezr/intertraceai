@@ -5,7 +5,6 @@ from pathlib import Path
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import (
     PyMuPDFLoader,
-    UnstructuredWordDocumentLoader,
 )
 from sentence_transformers import SentenceTransformer
 
@@ -54,8 +53,6 @@ class Ingest:
                 ext = Path(path).suffix.lower()
                 if ext == ".pdf":
                     loader = PyMuPDFLoader(path)
-                elif ext == ".docx":
-                    loader = UnstructuredWordDocumentLoader(path)
                 else:
                     return []
                 return loader.load()
