@@ -12,14 +12,26 @@ class ChatController extends Notifier<List<ChatMessage>> {
   }
 
   Future<void> sendMessage(String text) async {
-    state = [...state, ChatMessage(text: text, isUser: true)];
+    // User message
+    state = [
+      ...state,
+      ChatMessage(text: text, isUser: true),
+      ChatMessage(text: "", isUser: false, isLoading: true), // loading
+    ];
 
     try {
       final reply = await _repository.sendQuery(text);
 
-      state = [...state, ChatMessage(text: reply, isUser: false)];
+      // Remove loading and add reply
+      state = [
+        ...state.where((m) => !m.isLoading),
+        ChatMessage(text: reply, isUser: false),
+      ];
     } catch (e) {
-      state = [...state, ChatMessage(text: "Error: $e", isUser: false)];
+      state = [
+        ...state.where((m) => !m.isLoading),
+        ChatMessage(text: "Error: $e", isUser: false),
+      ];
     }
   }
 }
