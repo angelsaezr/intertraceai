@@ -2,7 +2,7 @@ import tiktoken
 from sentence_transformers import SentenceTransformer
 
 import app.core.config as config
-from app.db.chromadb import collection
+from app.db.chromadb import get_collection
 
 
 class Retriever:
@@ -20,7 +20,7 @@ class Retriever:
         self.use_normalize = config.USE_NORMALIZE
 
         # Connect to Chroma vector database
-        self.collection = collection
+        self.collection = get_collection()
 
     def embed_query(self, query: str):
         """

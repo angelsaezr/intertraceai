@@ -10,7 +10,7 @@ from sentence_transformers import SentenceTransformer
 
 import app.core.config as config
 from app.db import repository
-from app.db.chromadb import collection
+from app.db.chromadb import get_collection
 
 
 class Ingest:
@@ -32,7 +32,7 @@ class Ingest:
         self.show_progress = config.SHOW_PROGRESS
 
         # Connect to Chroma vector database
-        self.collection = collection
+        self.collection = get_collection()
 
         # Optimized text splitter (fewer calls, more speed)
         self.text_splitter = RecursiveCharacterTextSplitter(
@@ -111,7 +111,7 @@ class Ingest:
         ids = [f"{Path(meta['source']).stem}_{uuid.uuid4()}" for meta in metadatas]
 
         # Save to Chroma
-        self.collection.add(
+        get_collection().add(
             embeddings=embeddings,
             documents=documents_text,
             metadatas=metadatas,

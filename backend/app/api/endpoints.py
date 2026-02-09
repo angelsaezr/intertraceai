@@ -33,21 +33,6 @@ def get_documents(session: Session = Depends(get_session)):
     docs = repository.list_documents(session)
     return docs
 
-@app.post("/documents/upload", tags=["Documents"])
-async def upload_document(document: Document):
-    """
-    Add a new document to the database.
-    """
-
-    return {"message": "Document added successfully"}
-
-@app.delete("/documents/{doc_id}", tags=["Documents"])
-async def delete_document(doc_id: str):
-    """
-    Delete a document from the database.
-    """
-    return {"message": f"Document {doc_id} deleted successfully."}
-
 @app.post("/search", tags=["Search"])
 async def search():
     """
@@ -67,6 +52,22 @@ async def ingest(session: Session = Depends(get_session)):
         "message": "Pipeline run successfully",
         "documents_loaded": len(split_docs),
         "embeddings_generated": len(embeddings)
+    }
+
+@app.post("/ingest/reset", tags=["Pipeline"])
+async def reset_and_ingest(session: Session = Depends(get_session)):
+    pipeline = Pipeline()
+
+    pipeline.reset_ingestion(session=session, clear_history=False)
+
+    engine = Engine()
+    file_paths = engine.search()
+    split_docs, embeddings = pipeline.run(file_paths, session)
+
+    return {
+        "message": "Ingest completed",
+        "documents_loaded": len(split_docs),
+        "embeddings_generated": len(embeddings),
     }
 
 @app.post("/query", tags=["Pipeline"], response_model=QueryResponse)

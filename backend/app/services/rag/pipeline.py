@@ -4,6 +4,7 @@ from sqlmodel import Session
 
 import app.core.config as config
 from app.db import repository
+from app.db.chromadb import client
 from app.services.rag.generator import Generator
 from app.services.rag.ingest import Ingest
 
@@ -12,6 +13,24 @@ class Pipeline:
     def __init__(self):
         self.ingest = Ingest()
         self.generator = Generator()
+
+    def reset_ingestion(self, session: Session, clear_history: bool = False):
+        try:
+            client.delete_collection(name=config.COLLECTION_NAME)
+            config.debug_print("[Reset] Chroma collection deleted.")
+        except Exception as e:
+            config.debug_print(f"[Reset] Chroma delete skipped: {e}")
+
+        client.get_or_create_collection(name=config.COLLECTION_NAME)
+        config.debug_print("[Reset] Chroma collection recreated.")
+
+        repository.delete_all_chunks(session)
+        repository.delete_all_documents(session)
+
+        if clear_history:
+            repository.delete_all_history(session)
+
+        config.debug_print("[Reset] SQLite cleared (chunks, documents).")
 
     def run(self, file_paths: list[str], session: Session):
         documents = self.ingest.load_from_paths(file_paths)

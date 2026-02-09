@@ -36,4 +36,22 @@ def create_history(session: Session, query: str, response: str) -> History:
     return h
 
 def list_documents(session: Session):
-    return session.exec(select(Document)).scalars().all()
+    return session.exec(select(Document)).all()
+
+def delete_all_chunks(session: Session):
+    chunks = session.exec(select(Chunk)).all()
+    for c in chunks:
+        session.delete(c)
+    session.commit()
+
+def delete_all_documents(session: Session):
+    docs = session.exec(select(Document)).all()
+    for d in docs:
+        session.delete(d)
+    session.commit()
+
+def delete_all_history(session: Session):
+    items = session.exec(select(History)).all()
+    for h in items:
+        session.delete(h)
+    session.commit()
