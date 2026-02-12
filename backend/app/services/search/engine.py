@@ -60,9 +60,6 @@ class Engine:
         if depth > self.max_depth:
             return []
 
-        # Directories to exclude explicitly
-        excluded_folders = config.EXCLUDED_FOLDERS
-
         results = []
         try:
             # Skip large directories for efficiency, except for the home directory
@@ -73,8 +70,8 @@ class Engine:
                 for entry in entries:
                     # Skip excluded directories
                     if entry.is_dir(follow_symlinks=False):
-                        # Skip hidden directories (start with ".") and excluded ones
-                        if entry.name.startswith(".") or entry.name in excluded_folders:
+                        # Skip hidden directories (start with ".")
+                        if entry.name.startswith("."):
                             continue
 
                     if entry.is_file():

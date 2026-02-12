@@ -24,52 +24,9 @@ CONVERT_TO_NP = True # Whether to convert embeddings to numpy arrays
 TEMPERATURE = 0.1 # Default temperature for LLM responses
 
 # Search engine settings
-SEARCH_MAX_DEPTH = 500
+SEARCH_MAX_DEPTH = 3
 SEARCH_MAX_DIR_SIZE_MB = 200
-ALLOWED_EXTENSIONS = {".pdf", ".docx"}
-EXCLUDED_FOLDERS = {
-    # --- Windows  ---
-    r"C:\Windows",
-    r"C:\Program Files",
-    r"C:\Program Files (x86)",
-    r"C:\ProgramData",
-    r"C:\Recovery",
-    r"C:\$Recycle.Bin",
-    r"C:\System Volume Information",
-    r"AppData",
-    r"Contacts",
-    r"Favorites",
-    r"Searches",
-    r"Application Data",
-    r"Cookies",
-    r"Recent",
-    r"SendTo",
-    r"Start Menu",
-    r"Videos\Captures",
-    r"Saved Games",
-    r"MicrosoftEdgeBackups",
-    r"OneDrive\~tmp",
-    r"NTUSER.DAT",
-    r"node_modules",
-
-    # --- Linux  ---
-    "/bin",
-    "/sbin",
-    "/boot",
-    "/dev",
-    "/proc",
-    "/sys",
-    "/run",
-    "/lib",
-    "/lib64",
-    "/var",
-    "/usr",
-    "~/.cache",
-    "~/.config",
-    "~/.local/share",
-    "~/.mozilla",
-    "~/.vscode",
-}
+ALLOWED_EXTENSIONS = {".pdf"}
 
 # Debug mode
 DEBUG_MODE = True
