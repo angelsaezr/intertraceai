@@ -21,10 +21,7 @@ class InfoScreen extends ConsumerWidget {
               SizedBox(width: 10),
               Text(
                 "System Configuration",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -42,7 +39,7 @@ class InfoScreen extends ConsumerWidget {
                   color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
-                )
+                ),
               ],
             ),
             child: Column(
@@ -50,10 +47,7 @@ class InfoScreen extends ConsumerWidget {
               children: [
                 const Text(
                   "Search Engine Parameters",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 16),
 
@@ -74,10 +68,7 @@ class InfoScreen extends ConsumerWidget {
                 color: AppColors.layoutBackground,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Text(
-                ui.result!,
-                style: const TextStyle(fontSize: 14),
-              ),
+              child: Text(ui.result!, style: const TextStyle(fontSize: 14)),
             ),
 
           const Spacer(),
@@ -90,11 +81,16 @@ class InfoScreen extends ConsumerWidget {
                     ? const SizedBox(
                         width: 18,
                         height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            AppColors.primary,
+                          ),
+                        ),
                       )
                     : const Icon(Icons.sync),
                 label: Text(
-                  ui.loading ? "Re-ingesting..." : "Ingest",
+                  ui.loading ? "Ingesting..." : "Ingest",
                   style: const TextStyle(fontSize: 15),
                 ),
                 style: ElevatedButton.styleFrom(
@@ -107,8 +103,7 @@ class InfoScreen extends ConsumerWidget {
                 ),
                 onPressed: ui.loading
                     ? null
-                    : () =>
-                        ref.read(ingestProvider.notifier).resetAndIngest(),
+                    : () => ref.read(ingestProvider.notifier).resetAndIngest(),
               ),
             ),
           ),
@@ -122,12 +117,7 @@ class InfoScreen extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         children: [
-          Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(fontSize: 14),
-            ),
-          ),
+          Expanded(child: Text(label, style: const TextStyle(fontSize: 14))),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
@@ -141,7 +131,7 @@ class InfoScreen extends ConsumerWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-          )
+          ),
         ],
       ),
     );
