@@ -26,7 +26,6 @@ class Pipeline:
 
         repository.delete_all_chunks(session)
         repository.delete_all_documents(session)
-
         config.debug_print("[Reset] SQLite cleared (chunks, documents).")
 
     def run(self, file_paths: list[str], session: Session):
@@ -40,9 +39,23 @@ class Pipeline:
         db_documents = []
         docs_to_process = []
 
-        for source, docs_for_source in docs_by_source.items():
-            existing = repository.get_document_by_path(session, source)
+        # Count already ingested documents
+        existing_count = len(repository.list_documents(session))
 
+        for source, docs_for_source in docs_by_source.items():
+
+            # Check global document limit
+            if existing_count + len(db_documents) >= config.MAX_DOCUMENTS:
+                config.debug_print(f"[Ingest] Document limit ({config.MAX_DOCUMENTS}) reached, stopping.")
+                break
+
+            # Check PDF size limit
+            size_mb = Path(source).stat().st_size / (1024 * 1024)
+            if size_mb > config.MAX_PDF_SIZE_MB:
+                config.debug_print(f"[Ingest] '{source}' exceeds size limit ({size_mb:.1f} MB > {config.MAX_PDF_SIZE_MB} MB), skipping.")
+                continue
+
+            existing = repository.get_document_by_path(session, source)
             if existing:
                 config.debug_print(f"[Ingest] '{source}' already exists, skipping.")
                 continue
@@ -53,7 +66,6 @@ class Pipeline:
                 path=source
             )
             db_documents.append(db_doc)
-
             docs_to_process.extend(docs_for_source)
 
         if not docs_to_process:

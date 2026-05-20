@@ -10,7 +10,7 @@ CHROMA_DIR = str(BASE_DIR / "backend" / "data" / "chroma")
 LMSTUDIO_BASE_URL = "http://localhost:1234/v1/chat/completions" 
 LLM_MODEL = "google/gemma-3-1b"
 
-# RAG and Embedding settings
+# RAG settings
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 BATCH_SIZE = 32 # Batch size for embedding generation
 CHUNK_SIZE = 1500 # Chunk size for text splitting
@@ -28,6 +28,8 @@ DISTANCE_THRESHOLD = 1 # Distance threshold for filtering retrieved documents
 SEARCH_MAX_DEPTH = 3
 SEARCH_MAX_DIR_SIZE_MB = 200
 ALLOWED_EXTENSIONS = {".pdf"}
+MAX_DOCUMENTS = 10
+MAX_PDF_SIZE_MB = 10
 
 # Debug mode
 DEBUG_MODE = True

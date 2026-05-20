@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intertraceai/core/theme/app_colors.dart';
@@ -9,6 +10,7 @@ class InfoScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ui = ref.watch(ingestProvider);
+    final documentsFolder = '${Platform.environment['HOME'] ?? Platform.environment['USERPROFILE']}/Documents';
 
     return Padding(
       padding: const EdgeInsets.all(24),
@@ -34,13 +36,6 @@ class InfoScreen extends ConsumerWidget {
             decoration: BoxDecoration(
               color: AppColors.layoutBackground,
               borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
-                ),
-              ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,10 +45,12 @@ class InfoScreen extends ConsumerWidget {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 16),
-
+                _configRow("Documents folder", documentsFolder),
                 _configRow("Max depth", "3"),
                 _configRow("Max directory size (MB)", "200"),
                 _configRow("Allowed extensions", ".pdf"),
+                _configRow("Max documents", "10"),
+                _configRow("Max PDF size (MB)", "10"),
               ],
             ),
           ),
@@ -83,9 +80,8 @@ class InfoScreen extends ConsumerWidget {
                         height: 18,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            AppColors.primary,
-                          ),
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(AppColors.primary),
                         ),
                       )
                     : const Icon(Icons.sync),
@@ -118,17 +114,21 @@ class InfoScreen extends ConsumerWidget {
       child: Row(
         children: [
           Expanded(child: Text(label, style: const TextStyle(fontSize: 14))),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.04),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              value,
-              style: const TextStyle(
-                fontFamily: 'monospace',
-                fontWeight: FontWeight.w600,
+          Flexible(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.04),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                value,
+                style: const TextStyle(
+                  fontFamily: 'monospace',
+                  fontWeight: FontWeight.w600,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
               ),
             ),
           ),
