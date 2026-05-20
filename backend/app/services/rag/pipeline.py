@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from sentence_transformers import SentenceTransformer
 from sqlmodel import Session
 
 import app.core.config as config
@@ -7,14 +8,20 @@ from app.db import repository
 from app.db.chromadb import client
 from app.services.rag.generator import Generator
 from app.services.rag.ingest import Ingest
+from app.services.rag.retriever import Retriever
 
 
 class Pipeline:
-    def __init__(self):
-        self.ingest = Ingest()
-        self.generator = Generator()
 
-    def reset_ingestion(self, session: Session):
+    def __init__(self):
+        shared_model = SentenceTransformer(config.EMBEDDING_MODEL)
+        config.debug_print(f"[Pipeline] Loaded embedding model: {config.EMBEDDING_MODEL}")
+
+        self.ingest = Ingest(model=shared_model)
+        self.retriever = Retriever(model=shared_model)
+        self.generator = Generator(retriever=self.retriever)
+
+    def reset_ingestion(self, session: Session) -> None:
         try:
             client.delete_collection(name=config.COLLECTION_NAME)
             config.debug_print("[Reset] Chroma collection deleted.")
@@ -72,6 +79,5 @@ class Pipeline:
         )
         return split_docs, embeddings
 
-    async def query(self, user_query: str, session: Session):
-        result = await self.generator.generate(user_query)
-        return result
+    async def query(self, user_query: str, session: Session) -> dict:
+        return await self.generator.generate(user_query)

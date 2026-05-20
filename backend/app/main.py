@@ -1,12 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import endpoints
+from app.api.endpoints import app as router
+from app.api.endpoints import lifespan
 
 app = FastAPI(
     title="InterTraceAI",
     description="InterTraceAI is an AI app designed to search for user information locally",
     version="1.0.0",
+    lifespan=lifespan,
 )
 
 app.add_middleware(
@@ -17,4 +19,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(endpoints.app)
+app.include_router(router)
