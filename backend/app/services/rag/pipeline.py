@@ -29,44 +29,34 @@ class Pipeline:
         config.debug_print("[Reset] SQLite cleared (chunks, documents).")
 
     def run(self, file_paths: list[str], session: Session):
-        documents = self.ingest.load_from_paths(file_paths)
-
-        docs_by_source = {}
-        for doc in documents:
-            source = doc.metadata.get("source")
-            docs_by_source.setdefault(source, []).append(doc)
-
         db_documents = []
         docs_to_process = []
 
-        # Count already ingested documents
         existing_count = len(repository.list_documents(session))
 
-        for source, docs_for_source in docs_by_source.items():
-
-            # Check global document limit
+        for path in file_paths:
             if existing_count + len(db_documents) >= config.MAX_DOCUMENTS:
-                config.debug_print(f"[Ingest] Document limit ({config.MAX_DOCUMENTS}) reached, stopping.")
+                config.debug_print("[Ingest] Limit reached, stopping.")
                 break
 
-            # Check PDF size limit
-            size_mb = Path(source).stat().st_size / (1024 * 1024)
+            size_mb = Path(path).stat().st_size / (1024 * 1024)
             if size_mb > config.MAX_PDF_SIZE_MB:
-                config.debug_print(f"[Ingest] '{source}' exceeds size limit ({size_mb:.1f} MB > {config.MAX_PDF_SIZE_MB} MB), skipping.")
+                config.debug_print(f"[Ingest] '{path}' too large ({size_mb:.1f} MB), skipping.")
                 continue
 
-            existing = repository.get_document_by_path(session, source)
-            if existing:
-                config.debug_print(f"[Ingest] '{source}' already exists, skipping.")
+            if repository.get_document_by_path(session, path):
+                config.debug_print(f"[Ingest] '{path}' already exists, skipping.")
                 continue
+
+            for doc in self.ingest.load_from_paths([path]):
+                docs_to_process.append(doc)
 
             db_doc = repository.create_document(
                 session=session,
-                name=Path(source).name,
-                path=source
+                name=Path(path).name,
+                path=path
             )
             db_documents.append(db_doc)
-            docs_to_process.extend(docs_for_source)
 
         if not docs_to_process:
             config.debug_print("[Ingest] No new documents.")
@@ -74,14 +64,12 @@ class Pipeline:
 
         split_docs = self.ingest.split_documents(docs_to_process)
         embeddings = self.ingest.generate_embeddings(split_docs)
-
         self.ingest.save_to_db(
             embeddings=embeddings,
             split_docs=split_docs,
             db_session=session,
             db_documents=db_documents
         )
-
         return split_docs, embeddings
 
     async def query(self, user_query: str, session: Session):

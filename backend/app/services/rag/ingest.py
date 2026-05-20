@@ -1,5 +1,4 @@
 import uuid
-from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -45,31 +44,20 @@ class Ingest:
         Load documents from given file paths.
 
         param file_paths: List of file paths to load
-        return: List of loaded documents
         """
 
-        def load(path):
+        for path in file_paths:
             try:
                 ext = Path(path).suffix.lower()
                 if ext == ".pdf":
                     loader = PyMuPDFLoader(path)
                 else:
-                    return []
-                return loader.load()
+                    continue
+                docs = loader.load()
+                for doc in docs:
+                    yield doc
             except Exception as e:
                 config.debug_print(f"Error loading {path}: {e}")
-                return []
-
-        documents = []
-        
-        # Use ThreadPoolExecutor for concurrent loading
-        with ThreadPoolExecutor(max_workers=4) as executor:
-            results = executor.map(load, file_paths)
-
-        for docs in results:
-            documents.extend(docs)
-
-        return documents
 
     def split_documents(self, documents):
         """
