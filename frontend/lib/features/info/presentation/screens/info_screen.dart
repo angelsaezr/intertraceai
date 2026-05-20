@@ -20,7 +20,7 @@ class InfoScreen extends ConsumerWidget {
               Icon(Icons.settings, size: 26),
               SizedBox(width: 10),
               Text(
-                "System Configuration",
+                "System configuration",
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ],
@@ -46,14 +46,14 @@ class InfoScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Search Engine Parameters",
+                  "Search engine parameters",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 16),
 
-                _configRow("Max Depth", "3"),
-                _configRow("Max Directory Size (MB)", "200"),
-                _configRow("Allowed Extensions", ".pdf"),
+                _configRow("Max depth", "3"),
+                _configRow("Max directory size (MB)", "200"),
+                _configRow("Allowed extensions", ".pdf"),
               ],
             ),
           ),

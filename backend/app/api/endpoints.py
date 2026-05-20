@@ -19,6 +19,7 @@ class QueryRequest(BaseModel):
 
 class QueryResponse(BaseModel):
     answer: str
+    sources: list[str] = []
 
 # Endpoints
 
@@ -73,5 +74,5 @@ async def reset_and_ingest(session: Session = Depends(get_session)):
 @app.post("/query", tags=["Pipeline"], response_model=QueryResponse)
 async def query_pipeline(request: QueryRequest, session: Session = Depends(get_session)):
     pipeline = Pipeline()
-    answer = await pipeline.query(request.question, session)
-    return QueryResponse(answer=answer)
+    result = await pipeline.query(request.question, session)
+    return QueryResponse(answer=result["answer"], sources=result["sources"])

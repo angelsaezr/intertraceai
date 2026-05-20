@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import tiktoken
 from sentence_transformers import SentenceTransformer
 
@@ -60,6 +62,9 @@ class Retriever:
         # Format results
         retrieved = []
         for doc, meta, doc_id, dist in zip(docs, metadatas, ids, distances):
+            if dist > config.DISTANCE_THRESHOLD:
+                config.debug_print(f"[Filter] Discarded chunk {doc_id} by distance {dist:.4f}")
+                continue
             retrieved.append({
                 "id": doc_id,
                 "text": doc,
@@ -84,6 +89,7 @@ class Retriever:
 
         # Retrieve documents
         retrieved_docs = self.search(query)
+        config.debug_print(f"[DEBUG] retrieved_docs: {retrieved_docs}")
 
         # Simple keyword-based re-ranking for better relevance
         keywords = query.lower().split()
@@ -100,6 +106,7 @@ class Retriever:
 
         combined = ""
         total_tokens = 0
+        sources = []
 
         for item in retrieved_docs:
             text = item["text"]
@@ -110,16 +117,21 @@ class Retriever:
                 break
             
             # Append chunk with metadata
+            source = item["metadata"].get("source", "unknown")
             combined += (
-                f"\n\n[CHUNK id={item['id']} source={item['metadata'].get('source','unknown')}]"
+                f"\n\n[CHUNK id={item['id']} source={source}]"
                 f"\n{text}"
             )
 
             total_tokens += tokens
 
+            name = Path(source).name
+            if name not in sources:
+                sources.append(name)
+
         config.debug_print(f"[ContextBuilder] Total tokens used: {total_tokens}/{max_tokens}")
 
-        return combined.strip()
+        return combined.strip(), sources
 
 if __name__ == "__main__":
     retriever = Retriever()

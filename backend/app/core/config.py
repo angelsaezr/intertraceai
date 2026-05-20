@@ -22,6 +22,7 @@ SHOW_PROGRESS = True # Whether to show progress bars
 COLLECTION_NAME = "document_embeddings"
 CONVERT_TO_NP = True # Whether to convert embeddings to numpy arrays
 TEMPERATURE = 0.1 # Default temperature for LLM responses
+DISTANCE_THRESHOLD = 0.9 # Distance threshold for filtering retrieved documents
 
 # Search engine settings
 SEARCH_MAX_DEPTH = 3

@@ -30,6 +30,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 text: msg.text,
                 isUser: msg.isUser,
                 isLoading: msg.isLoading,
+                sources: msg.sources,
               );
             },
           ),

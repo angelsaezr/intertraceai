@@ -53,7 +53,7 @@ class Generator:
 
         try:
             # Retrieve context from ChromaDB
-            context = self.retriever.get_context_text(query)
+            context, sources = self.retriever.get_context_text(query)
             config.debug_print(f"\n=== INJECTED CONTEXT ===\n{context}")
 
             # System prompt enforcing RAG behavior
@@ -70,11 +70,11 @@ class Generator:
 
             # Send to local LLM
             reply = await self._call_llm(messages)
-            return reply
+            return {"answer": reply, "sources": sources}
 
         except Exception:
             traceback.print_exc()
-            return "An error occurred while generating the response."
+            return {"answer": "An error occurred while generating the response.", "sources": []}
 
 
 if __name__ == "__main__":

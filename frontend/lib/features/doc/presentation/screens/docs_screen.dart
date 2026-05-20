@@ -20,7 +20,7 @@ class DocsScreen extends ConsumerWidget {
               const Icon(Icons.description, size: 26),
               const SizedBox(width: 10),
               const Text(
-                "Ingested Documents",
+                "Ingested documents",
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const Spacer(),

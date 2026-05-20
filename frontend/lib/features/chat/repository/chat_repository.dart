@@ -6,7 +6,7 @@ class ChatRepository {
 
   ChatRepository({required this.baseUrl});
 
-  Future<String> sendQuery(String message) async {
+  Future<Map<String, dynamic>> sendQuery(String message) async {
     final response = await http.post(
       Uri.parse("$baseUrl/query"),
       headers: {"Content-Type": "application/json"},
@@ -17,6 +17,10 @@ class ChatRepository {
       throw Exception("Error: ${response.body}");
     }
 
-    return jsonDecode(response.body)["answer"];
+    final body = jsonDecode(response.body);
+    return {
+      "answer": body["answer"] as String,
+      "sources": (body["sources"] as List<dynamic>).cast<String>(),
+    };
   }
 }

@@ -76,6 +76,6 @@ class Pipeline:
         return split_docs, embeddings
 
     async def query(self, user_query: str, session: Session):
-        response = await self.generator.generate(user_query)
-        repository.create_history(session, user_query, response)
-        return response
+        result = await self.generator.generate(user_query)
+        repository.create_history(session, user_query, result["answer"])
+        return result
