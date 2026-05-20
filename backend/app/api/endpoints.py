@@ -59,7 +59,7 @@ async def ingest(session: Session = Depends(get_session)):
 async def reset_and_ingest(session: Session = Depends(get_session)):
     pipeline = Pipeline()
 
-    pipeline.reset_ingestion(session=session, clear_history=False)
+    pipeline.reset_ingestion(session=session)
 
     engine = Engine()
     file_paths = engine.search()

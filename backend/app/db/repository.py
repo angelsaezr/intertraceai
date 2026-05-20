@@ -2,7 +2,7 @@ from typing import Optional
 
 from sqlmodel import Session, select
 
-from app.db.models import Chunk, Document, History
+from app.db.models import Chunk, Document
 
 
 def get_document_by_path(session: Session, path: str) -> Optional[Document]:
@@ -28,13 +28,6 @@ def create_chunk(session: Session, document_id: int, chroma_id: str, text: str, 
     session.refresh(chunk)
     return chunk
 
-def create_history(session: Session, query: str, response: str) -> History:
-    h = History(query=query, response=response)
-    session.add(h)
-    session.commit()
-    session.refresh(h)
-    return h
-
 def list_documents(session: Session):
     return session.exec(select(Document)).all()
 
@@ -48,10 +41,4 @@ def delete_all_documents(session: Session):
     docs = session.exec(select(Document)).all()
     for d in docs:
         session.delete(d)
-    session.commit()
-
-def delete_all_history(session: Session):
-    items = session.exec(select(History)).all()
-    for h in items:
-        session.delete(h)
     session.commit()

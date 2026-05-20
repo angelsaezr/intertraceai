@@ -14,7 +14,7 @@ class Pipeline:
         self.ingest = Ingest()
         self.generator = Generator()
 
-    def reset_ingestion(self, session: Session, clear_history: bool = False):
+    def reset_ingestion(self, session: Session):
         try:
             client.delete_collection(name=config.COLLECTION_NAME)
             config.debug_print("[Reset] Chroma collection deleted.")
@@ -26,9 +26,6 @@ class Pipeline:
 
         repository.delete_all_chunks(session)
         repository.delete_all_documents(session)
-
-        if clear_history:
-            repository.delete_all_history(session)
 
         config.debug_print("[Reset] SQLite cleared (chunks, documents).")
 
@@ -77,5 +74,4 @@ class Pipeline:
 
     async def query(self, user_query: str, session: Session):
         result = await self.generator.generate(user_query)
-        repository.create_history(session, user_query, result["answer"])
         return result

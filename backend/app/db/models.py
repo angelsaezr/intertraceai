@@ -20,9 +20,3 @@ class Document(SQLModel, table=True):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     chunks: list["Chunk"] = Relationship(back_populates="document")
-
-class History(SQLModel, table=True):
-    id: int | None = Field(default=None, primary_key=True)
-    query: str
-    response: str
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
