@@ -59,7 +59,7 @@ async def ingest(
 ):
     engine = Engine()
     file_paths = engine.search()
-    split_docs, embeddings = pipeline.run(file_paths, session)
+    split_docs, embeddings = pipeline.ingest(file_paths, session)
     return {
         "message": "Pipeline run successfully",
         "documents_loaded": len(split_docs),
@@ -75,7 +75,7 @@ async def reset_and_ingest(
     pipeline.reset_ingestion(session=session)
     engine = Engine()
     file_paths = engine.search()
-    split_docs, embeddings = pipeline.run(file_paths, session)
+    split_docs, embeddings = pipeline.ingest(file_paths, session)
     return {
         "message": "Ingest completed",
         "documents_loaded": len(split_docs),
@@ -84,10 +84,6 @@ async def reset_and_ingest(
 
 
 @app.post("/query", tags=["Pipeline"], response_model=QueryResponse)
-async def query_pipeline(
-    request: QueryRequest,
-    session: Session = Depends(get_session),
-    pipeline: Pipeline = Depends(get_pipeline),
-):
-    result = await pipeline.query(request.question, session)
+async def query_pipeline(request: QueryRequest, pipeline: Pipeline = Depends(get_pipeline)):
+    result = await pipeline.query(request.question)
     return QueryResponse(answer=result["answer"], sources=result["sources"])

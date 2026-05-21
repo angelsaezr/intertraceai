@@ -35,7 +35,7 @@ class Pipeline:
         repository.delete_all_documents(session)
         config.debug_print("[Reset] SQLite cleared (chunks, documents).")
 
-    def run(self, file_paths: list[str], session: Session):
+    def ingest(self, file_paths: list[str], session: Session):
         db_documents = []
         docs_to_process = []
 
@@ -79,5 +79,5 @@ class Pipeline:
         )
         return split_docs, embeddings
 
-    async def query(self, user_query: str, session: Session) -> dict:
+    async def query(self, user_query: str) -> dict:
         return await self.generator.generate(user_query)

@@ -16,7 +16,6 @@ class Retriever:
         self.model = model
         self.top_k = config.TOP_K
         self.use_normalize = config.USE_NORMALIZE
-        # NO guardar self.collection aquí
 
     def embed_query(self, query: str):
         return self.model.encode(
@@ -28,7 +27,6 @@ class Retriever:
     def search(self, query: str) -> list[dict]:
         query_vec = self.embed_query(query)
 
-        # Obtener siempre la colección fresca
         collection = get_collection()
 
         results = collection.query(

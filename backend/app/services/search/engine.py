@@ -82,7 +82,7 @@ class Engine:
                         results.extend(self._search_directory(entry.path, depth + 1)) # Recurse into subdirectory
         except (PermissionError, FileNotFoundError):
             # Skip directories we don't have access to
-            pass
+            config.debug_print(f"Skipping directory (access denied): {directory}")
         return results
 
     def search(self):
