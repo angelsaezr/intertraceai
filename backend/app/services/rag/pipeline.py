@@ -17,7 +17,7 @@ class Pipeline:
         shared_model = SentenceTransformer(config.EMBEDDING_MODEL)
         config.debug_print(f"[Pipeline] Loaded embedding model: {config.EMBEDDING_MODEL}")
 
-        self.ingest = Ingest(model=shared_model)
+        self.ingester = Ingest(model=shared_model)
         self.retriever = Retriever(model=shared_model)
         self.generator = Generator(retriever=self.retriever)
 
@@ -55,7 +55,7 @@ class Pipeline:
                 config.debug_print(f"[Ingest] '{path}' already exists, skipping.")
                 continue
 
-            for doc in self.ingest.load_from_paths([path]):
+            for doc in self.ingester.load_from_paths([path]):
                 docs_to_process.append(doc)
 
             db_doc = repository.create_document(
@@ -69,9 +69,9 @@ class Pipeline:
             config.debug_print("[Ingest] No new documents.")
             return [], []
 
-        split_docs = self.ingest.split_documents(docs_to_process)
-        embeddings = self.ingest.generate_embeddings(split_docs)
-        self.ingest.save_to_db(
+        split_docs = self.ingester.split_documents(docs_to_process)
+        embeddings = self.ingester.generate_embeddings(split_docs)
+        self.ingester.save_to_db(
             embeddings=embeddings,
             split_docs=split_docs,
             db_session=session,
