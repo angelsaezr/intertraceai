@@ -153,6 +153,14 @@ All system parameters live in `backend/app/core/config.py`:
 
 ---
 
+## Screenshots
+
+<img width="1372" height="807" alt="Captura de pantalla 2026-05-23 190404" src="https://github.com/user-attachments/assets/6c066e0a-3e7f-4121-88ba-3dd88c138faf" />
+<img width="1372" height="809" alt="Captura de pantalla 2026-05-23 181253" src="https://github.com/user-attachments/assets/b77ff731-46e3-4f07-b8ab-2f78542171f4" />
+<img width="1261" height="707" alt="Captura de pantalla 2026-05-23 180347" src="https://github.com/user-attachments/assets/0fdd0eff-513b-49e8-8100-21341fe5b65e" />
+
+---
+
 ## Limitations
 
 - Only **PDF** files are currently supported
