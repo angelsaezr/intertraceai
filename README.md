@@ -12,7 +12,7 @@ InterTraceAI implements a **RAG (Retrieval-Augmented Generation)** pipeline:
 
 1. **Ingest** — the app scans your `~/Documents` folder for PDF files, extracts their text, splits it into semantic chunks, generates vector embeddings, and stores everything in a hybrid persistence layer (SQLite for metadata, ChromaDB for vectors).
 2. **Retrieve** — when you ask a question, the same embedding model encodes your query and ChromaDB finds the most semantically similar chunks from your indexed documents.
-3. **Generate** — the retrieved chunks are assembled into a context-aware prompt and sent to a local language model (via LM Studio), which produces a grounded answer citing the source documents.
+3. **Generate** — the retrieved chunks are assembled into a context-aware prompt and sent to a local language model, which produces a grounded answer citing the source documents.
 
 ---
 
@@ -45,7 +45,7 @@ FastAPI Backend (Python)
         ├── SQLite (via SQLModel)  →  document & chunk metadata
         └── ChromaDB  →  vector embeddings
 
-LM Studio (separate process)  →  local LLM inference
+Local LLM inference
 ```
 
 The backend exposes three endpoints:
@@ -79,7 +79,7 @@ The backend exposes three endpoints:
 
 - Python 3.11+
 - Flutter 3.x (with desktop support enabled)
-- [LM Studio](https://lmstudio.ai/) with a model loaded and the local server running on `http://localhost:1234`
+- A LLM inference engine
 
 ### Backend
 
