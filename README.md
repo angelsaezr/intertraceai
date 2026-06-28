@@ -153,7 +153,7 @@ All system parameters live in `backend/app/core/config.py`:
 
 ---
 
-## Screenshots
+## User Interface
 
 <img width="1372" height="807" alt="Captura de pantalla 2026-05-23 190404" src="https://github.com/user-attachments/assets/6c066e0a-3e7f-4121-88ba-3dd88c138faf" />
 <img width="1372" height="809" alt="Captura de pantalla 2026-05-23 181253" src="https://github.com/user-attachments/assets/b77ff731-46e3-4f07-b8ab-2f78542171f4" />
